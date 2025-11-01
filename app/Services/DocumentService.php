@@ -778,11 +778,27 @@ class DocumentService
                     'estado_sunat' => 'RECHAZADO',
                     'respuesta_sunat' => json_encode($result['error'])
                 ]);
-                
+                // Extraer el mensaje de error apropiadamente
+                $errorMessage = 'Error desconocido';
+                if (isset($result['error'])) {
+                    if (is_object($result['error'])) {
+                        if (method_exists($result['error'], 'getMessage')) {
+                            $errorMessage = $result['error']->getMessage();
+                        } elseif (property_exists($result['error'], 'message')) {
+                            $errorMessage = $result['error']->message;
+                        } else {
+                            $errorMessage = json_encode($result['error']);
+                        }
+                    } elseif (is_string($result['error'])) {
+                        $errorMessage = $result['error'];
+                    } elseif (is_array($result['error'])) {
+                        $errorMessage = json_encode($result['error']);
+                    }
+                }
                 return [
                     'success' => false,
                     'document' => $summary->fresh(),
-                    'error' => $result['error']
+                    'error' => $errorMessage
                 ];
             }
             
