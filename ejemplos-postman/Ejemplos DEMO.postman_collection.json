@@ -1,0 +1,2418 @@
+{
+	"info": {
+		"_postman_id": "69f336d2-67f0-43c1-85b9-104b51bbcf27",
+		"name": "Ejemplos DEMO",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20633485",
+		"_collection_link": "https://api-go-facturacin-electrnica-sunat-peru.postman.co/workspace/API-GO-FACTURACI%25C3%2593N-ELECTR%25C3%2593NICA-~4d9d9944-99ee-4f5e-8be3-2f798a655d0c/collection/20633485-69f336d2-67f0-43c1-85b9-104b51bbcf27?action=share&source=collection_link&creator=20633485"
+	},
+	"item": [
+		{
+			"name": "1. Configuración (Demo y Producción) ✅",
+			"item": [
+				{
+					"name": "1.1. Inicializacion del sistema",
+					"item": [
+						{
+							"name": "1.1 - Verificar Estado del Sistema",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/setup/status",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"setup",
+										"status"
+									]
+								},
+								"description": "Verifica el estado actual del sistema, base de datos y dependencias."
+							},
+							"response": []
+						},
+						{
+							"name": "1.2 - Ejecutar Migraciones",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/setup/migrate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"setup",
+										"migrate"
+									]
+								},
+								"description": "Ejecuta todas las migraciones pendientes de base de datos."
+							},
+							"response": []
+						},
+						{
+							"name": "1.3 - Ejecutar Seeders",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/setup/seed",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"setup",
+										"seed"
+									]
+								},
+								"description": "Ejecuta los seeders para datos iniciales (roles, permisos, ubigeos)."
+							},
+							"response": []
+						},
+						{
+							"name": "1.4 - Información del Sistema",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/system/info",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"system",
+										"info"
+									]
+								},
+								"description": "Obtiene información detallada del sistema y configuración."
+							},
+							"response": []
+						}
+					],
+					"description": "Configuración inicial del sistema antes de cualquier operación. Incluye migraciones, seeders y verificación del estado del sistema."
+				},
+				{
+					"name": "FASE 2: GESTIÓN DE USUARIOS Y AUTENTICACIÓN",
+					"item": [
+						{
+							"name": "2.1 - Inicializar Usuario Administrador",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    var jsonData = pm.response.json();",
+											"    if (jsonData.success) {",
+											"        console.log('✅ Usuario administrador creado exitosamente');",
+											"        console.log('📧 Email: ' + jsonData.data.email);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Administrador del Sistema\",\n    \"email\": \"admin@sistema-sunat.com\",\n    \"password\": \"Admin123!@#\",\n    \"password_confirmation\": \"Admin123!@#\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/initialize",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"initialize"
+									]
+								},
+								"description": "Crea el primer usuario administrador del sistema. Solo funciona si no existen usuarios."
+							},
+							"response": []
+						},
+						{
+							"name": "2.2 - Login y Obtener Token de Acceso",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    var jsonData = pm.response.json();",
+											"    if (jsonData.access_token) {",
+											"        pm.collectionVariables.set('access_token', jsonData.access_token);",
+											"        pm.collectionVariables.set('token_type', jsonData.token_type || 'Bearer');",
+											"        pm.collectionVariables.set('user_id', jsonData.user.id);",
+											"        pm.collectionVariables.set('user_name', jsonData.user.name);",
+											"        console.log('✅ Token obtenido: ' + jsonData.access_token.substring(0, 20) + '...');",
+											"        console.log('👤 Usuario: ' + jsonData.user.name + ' (' + jsonData.user.email + ')');",
+											"        console.log('⏰ Expira en: ' + (jsonData.expires_in || 1440) + ' minutos');",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"admin@sistema-sunat.com\",\n    \"password\": \"Admin123!@#\",\n    \"token_name\": \"API Access Token\",\n    \"abilities\": [\"*\"]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"login"
+									]
+								},
+								"description": "Autentica usuario y obtiene token de acceso. El token se guarda automáticamente."
+							},
+							"response": []
+						},
+						{
+							"name": "2.3 - Verificar Usuario Autenticado",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/auth/me",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"auth",
+										"me"
+									]
+								},
+								"description": "Obtiene información del usuario actualmente autenticado."
+							},
+							"response": []
+						},
+						{
+							"name": "2.4 - Crear Usuario Adicional",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Usuario Operativo\",\n    \"email\": \"operativo@empresa.com\",\n    \"password\": \"User123!@#\",\n    \"password_confirmation\": \"User123!@#\",\n    \"role\": \"company_user\",\n    \"company_id\": {{company_id}}\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/auth/create-user",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"create-user"
+									]
+								},
+								"description": "Crea usuarios adicionales para el sistema con roles específicos."
+							},
+							"response": []
+						},
+						{
+							"name": "2.5 - Logout",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/auth/logout",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"auth",
+										"logout"
+									]
+								},
+								"description": "Cierra sesión y revoca el token actual."
+							},
+							"response": []
+						}
+					],
+					"description": "Sistema de autenticación completo con Laravel Sanctum, gestión de usuarios y tokens de API."
+				},
+				{
+					"name": "FASE 3: GESTIÓN DE EMPRESAS",
+					"item": [
+						{
+							"name": "3.1 - Listar Empresas",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 200) {",
+											"    var jsonData = pm.response.json();",
+											"    if (jsonData.success && jsonData.data && jsonData.data.length > 0) {",
+											"        pm.collectionVariables.set('company_id', jsonData.data[0].id);",
+											"        pm.collectionVariables.set('company_ruc', jsonData.data[0].ruc);",
+											"        pm.collectionVariables.set('company_name', jsonData.data[0].razon_social);",
+											"        console.log('✅ Company ID seleccionado: ' + jsonData.data[0].id);",
+											"        console.log('🏢 Empresa: ' + jsonData.data[0].razon_social);",
+											"        console.log('📄 RUC: ' + jsonData.data[0].ruc);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/companies",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"companies"
+									]
+								},
+								"description": "Lista todas las empresas del usuario autenticado."
+							},
+							"response": []
+						},
+						{
+							"name": "3.2 - Crear Nueva Empresa (Datos Básicos)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    var jsonData = pm.response.json();",
+											"    if (jsonData.success && jsonData.data) {",
+											"        pm.collectionVariables.set('company_id', jsonData.data.id);",
+											"        pm.collectionVariables.set('company_ruc', jsonData.data.ruc);",
+											"        pm.collectionVariables.set('company_name', jsonData.data.razon_social);",
+											"        console.log('✅ Nueva empresa creada - ID: ' + jsonData.data.id);",
+											"        console.log('🏢 Empresa: ' + jsonData.data.razon_social);",
+											"        console.log('📄 RUC: ' + jsonData.data.ruc);",
+											"        console.log('🔧 Siguiente paso: Completar configuración SUNAT');",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"ruc\": \"20123456789\",\n    \"razon_social\": \"EMPRESA DEMO SUNAT SAC\",\n    \"nombre_comercial\": \"Empresa Demo\",\n    \"direccion\": \"Av. República de Argentina 123\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"01-1234567\",\n    \"email\": \"contacto@empresademo.com\",\n    \"usuario_sol\": \"DEMOUSER\",\n    \"clave_sol\": \"Demo123456\",\n    \"modo_produccion\": 0\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/companies",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"companies"
+									]
+								},
+								"description": "Crea una nueva empresa con datos básicos. Usar modo_produccion: false para testing."
+							},
+							"response": []
+						},
+						{
+							"name": "3.3 - Ver Empresa Específica",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/companies/{{company_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"companies",
+										"{{company_id}}"
+									]
+								},
+								"description": "Obtiene detalles completos de una empresa específica."
+							},
+							"response": []
+						},
+						{
+							"name": "3.4 - Actualizar Empresa Completa (Form Data)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "ruc",
+											"value": "20123456789",
+											"description": "RUC de la empresa (11 dígitos)",
+											"type": "text"
+										},
+										{
+											"key": "razon_social",
+											"value": "EMPRESA DEMO SUNAT ACTUALIZADA SAC",
+											"type": "text"
+										},
+										{
+											"key": "nombre_comercial",
+											"value": "Empresa Demo Actualizada",
+											"type": "text"
+										},
+										{
+											"key": "usuario_sol",
+											"value": "MODDATOS",
+											"description": "Usuario SOL para SUNAT",
+											"type": "text"
+										},
+										{
+											"key": "clave_sol",
+											"value": "MODDATOS",
+											"description": "Clave SOL para SUNAT",
+											"type": "text"
+										},
+										{
+											"key": "certificado_pem",
+											"description": "Certificado digital (.p12/.pfx)",
+											"type": "file",
+											"src": "postman-cloud:///1f08c1c7-6fc1-4410-9067-f87b6186a81a"
+										},
+										{
+											"key": "certificado_password",
+											"value": "123456",
+											"description": "Contraseña del certificado",
+											"type": "text"
+										},
+										{
+											"key": "logo_path",
+											"description": "Logo de la empresa",
+											"type": "file",
+											"src": "postman-cloud:///1efc21cc-1c21-4690-9baf-bf8f949348b1"
+										},
+										{
+											"key": "direccion",
+											"value": "Via Libertadores",
+											"type": "text"
+										},
+										{
+											"key": "ubigeo",
+											"value": "150100",
+											"type": "text"
+										},
+										{
+											"key": "distrito",
+											"value": "Lima",
+											"type": "text"
+										},
+										{
+											"key": "provincia",
+											"value": "Lima",
+											"type": "text"
+										},
+										{
+											"key": "departamento",
+											"value": "San Isidro",
+											"type": "text"
+										},
+										{
+											"key": "email",
+											"value": "empresademo@gmail.com",
+											"type": "text"
+										},
+										{
+											"key": "modo_produccion",
+											"value": "0",
+											"type": "text"
+										},
+										{
+											"key": "_method",
+											"value": "PUT",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/companies/{{company_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"companies",
+										"{{company_id}}"
+									]
+								},
+								"description": "Actualiza empresa con certificados, logos y datos completos usando form-data."
+							},
+							"response": []
+						},
+						{
+							"name": "3.5 - Activar Empresa",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/companies/{{company_id}}/activate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"companies",
+										"{{company_id}}",
+										"activate"
+									]
+								},
+								"description": "Activa una empresa para operaciones."
+							},
+							"response": []
+						}
+					],
+					"description": "Creación y gestión de empresas multi-tenant con configuraciones SUNAT."
+				},
+				{
+					"name": "FASE 4: SUCURSALES Y CORRELATIVOS",
+					"item": [
+						{
+							"name": "5.1 - Crear Sucursal Principal",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    var jsonData = pm.response.json();",
+											"    if (jsonData.success && jsonData.data) {",
+											"        pm.collectionVariables.set('branch_id', jsonData.data.id);",
+											"        pm.collectionVariables.set('branch_code', jsonData.data.codigo);",
+											"        console.log('✅ Sucursal creada - ID: ' + jsonData.data.id);",
+											"        console.log('🏪 Nombre: ' + jsonData.data.nombre);",
+											"        console.log('🔢 Código: ' + jsonData.data.codigo);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"company_id\": {{company_id}},\n    \"codigo\": \"0001\",\n    \"nombre\": \"Sucursal Principal\",\n    \"direccion\": \"Av. República de Argentina 123\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"01-1234567\",\n    \"email\": \"principal@empresademo.com\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/branches",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"branches"
+									]
+								},
+								"description": "Crea la sucursal principal de la empresa."
+							},
+							"response": []
+						},
+						{
+							"name": "5.2 - Listar Sucursales",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/companies/{{company_id}}/branches",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"companies",
+										"{{company_id}}",
+										"branches"
+									]
+								},
+								"description": "Lista todas las sucursales de la empresa."
+							},
+							"response": []
+						},
+						{
+							"name": "5.3 - Crear Correlativos Básicos",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"correlativos\": [\n        {\n            \"tipo_documento\": \"01\",\n            \"serie\": \"F001\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"03\",\n            \"serie\": \"B001\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"07\",\n            \"serie\": \"FC01\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"08\",\n            \"serie\": \"FD01\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"09\",\n            \"serie\": \"T001\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/branches/{{branch_id}}/correlatives/batch",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"branches",
+										"{{branch_id}}",
+										"correlatives",
+										"batch"
+									]
+								},
+								"description": "Crea correlativos para los tipos de documento principales."
+							},
+							"response": []
+						},
+						{
+							"name": "5.4 - Ver Correlativos de Sucursal",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/branches/{{branch_id}}/correlatives",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"branches",
+										"{{branch_id}}",
+										"correlatives"
+									]
+								},
+								"description": "Lista todos los correlativos de la sucursal."
+							},
+							"response": []
+						},
+						{
+							"name": "5.5 - Activar Sucursal",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/branches/{{branch_id}}/activate",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"branches",
+										"{{branch_id}}",
+										"activate"
+									]
+								},
+								"description": "Activa la sucursal para operaciones."
+							},
+							"response": []
+						}
+					],
+					"description": "Configuración de sucursales y sistema de correlativos para documentos."
+				},
+				{
+					"name": "FASE 5: GESTIÓN DE CLIENTES",
+					"item": [
+						{
+							"name": "6.1 - Crear Cliente Persona Natural",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    var jsonData = pm.response.json();",
+											"    if (jsonData.success && jsonData.data) {",
+											"        pm.collectionVariables.set('client_dni_id', jsonData.data.id);",
+											"        console.log('✅ Cliente DNI creado - ID: ' + jsonData.data.id);",
+											"        console.log('👤 Cliente: ' + jsonData.data.razon_social);",
+											"        console.log('📄 DNI: ' + jsonData.data.numero_documento);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"company_id\": {{company_id}},\n    \"tipo_documento\": \"1\",\n    \"numero_documento\": \"12345678\",\n    \"razon_social\": \"Juan Carlos Pérez López\",\n    \"direccion\": \"Av. Los Incas 456\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"987654321\",\n    \"email\": \"juan.perez@email.com\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/clients",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"clients"
+									]
+								},
+								"description": "Crea un cliente persona natural (DNI)."
+							},
+							"response": []
+						},
+						{
+							"name": "6.2 - Crear Cliente Empresa",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) {",
+											"    var jsonData = pm.response.json();",
+											"    if (jsonData.success && jsonData.data) {",
+											"        pm.collectionVariables.set('client_ruc_id', jsonData.data.id);",
+											"        console.log('✅ Cliente RUC creado - ID: ' + jsonData.data.id);",
+											"        console.log('🏢 Cliente: ' + jsonData.data.razon_social);",
+											"        console.log('📄 RUC: ' + jsonData.data.numero_documento);",
+											"    }",
+											"}"
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"company_id\": {{company_id}},\n    \"tipo_documento\": \"6\",\n    \"numero_documento\": \"20987654321\",\n    \"razon_social\": \"CLIENTE CORPORATIVO SAC\",\n    \"nombre_comercial\": \"Cliente Corp\",\n    \"direccion\": \"Av. Javier Prado 1234\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"01-2345678\",\n    \"email\": \"contacto@clientecorp.com\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/clients",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"clients"
+									]
+								},
+								"description": "Crea un cliente empresa (RUC)."
+							},
+							"response": []
+						},
+						{
+							"name": "6.3 - Listar Clientes",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/clients?per_page=20&search=",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"clients"
+									],
+									"query": [
+										{
+											"key": "per_page",
+											"value": "20"
+										},
+										{
+											"key": "search",
+											"value": ""
+										}
+									]
+								},
+								"description": "Lista clientes con paginación y búsqueda."
+							},
+							"response": []
+						},
+						{
+							"name": "6.4 - Buscar Cliente por Documento",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"company_id\": {{company_id}},\n    \"tipo_documento\": \"6\",\n    \"numero_documento\": \"20987654321\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/clients/search-by-document",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"clients",
+										"search-by-document"
+									]
+								},
+								"description": "Busca cliente por tipo y número de documento."
+							},
+							"response": []
+						}
+					],
+					"description": "Sistema de gestión de clientes con validación de documentos peruanos."
+				},
+				{
+					"name": "FASE 6: SERVICIOS DE UBIGEO PERUANO",
+					"item": [
+						{
+							"name": "13.1 - Listar Regiones",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/ubigeos/regiones",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"ubigeos",
+										"regiones"
+									]
+								},
+								"description": "Lista todas las regiones del Perú."
+							},
+							"response": []
+						},
+						{
+							"name": "13.2 - Listar Provincias de Lima",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/ubigeos/provincias?region_id=150000",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"ubigeos",
+										"provincias"
+									],
+									"query": [
+										{
+											"key": "region_id",
+											"value": "150000",
+											"description": "Código de región Lima"
+										}
+									]
+								},
+								"description": "Lista provincias de una región específica."
+							},
+							"response": []
+						},
+						{
+							"name": "13.3 - Listar Distritos de Lima Metropolitana",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/ubigeos/distritos?provincia_id=150100",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"ubigeos",
+										"distritos"
+									],
+									"query": [
+										{
+											"key": "provincia_id",
+											"value": "150100",
+											"description": "Código de provincia Lima"
+										}
+									]
+								},
+								"description": "Lista distritos de una provincia específica."
+							},
+							"response": []
+						},
+						{
+							"name": "13.4 - Buscar Ubigeo por Nombre",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/ubigeos/search?q=miraflores",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"ubigeos",
+										"search"
+									],
+									"query": [
+										{
+											"key": "q",
+											"value": "miraflores",
+											"description": "Término de búsqueda"
+										}
+									]
+								},
+								"description": "Busca ubicaciones geográficas por nombre."
+							},
+							"response": []
+						},
+						{
+							"name": "13.5 - Obtener Ubigeo por Código",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/ubigeos/150101",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"ubigeos",
+										"150101"
+									]
+								},
+								"description": "Obtiene información completa de un ubigeo específico."
+							},
+							"response": []
+						}
+					],
+					"description": "Servicios completos de códigos geográficos del Perú (INEI)."
+				},
+				{
+					"name": "FASE 7: CONFIGURACIONES GENERALES Y REPORTES",
+					"item": [
+						{
+							"name": "14.1 - Ver Configuraciones por Defecto",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/config/defaults",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"config",
+										"defaults"
+									]
+								},
+								"description": "Obtiene configuraciones por defecto del sistema."
+							},
+							"response": []
+						},
+						{
+							"name": "14.2 - Resumen de Configuraciones",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/config/summary?company_id={{company_id}}",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"config",
+										"summary"
+									],
+									"query": [
+										{
+											"key": "company_id",
+											"value": "{{company_id}}"
+										}
+									]
+								},
+								"description": "Resumen completo de configuraciones por empresa."
+							},
+							"response": []
+						},
+						{
+							"name": "14.3 - Ver Tipos de Documento SUNAT",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/correlatives/document-types",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"correlatives",
+										"document-types"
+									]
+								},
+								"description": "Lista todos los tipos de documento SUNAT disponibles."
+							},
+							"response": []
+						},
+						{
+							"name": "14.4 - Ver Formatos PDF Disponibles",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{access_token}}"
+									}
+								],
+								"url": {
+									"raw": "{{base_url}}/v1/pdf/formats",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"pdf",
+										"formats"
+									]
+								},
+								"description": "Lista formatos de PDF disponibles para generación."
+							},
+							"response": []
+						}
+					],
+					"description": "Configuraciones del sistema y generación de reportes."
+				}
+			]
+		},
+		{
+			"name": "2. Boletas ✅",
+			"item": [
+				{
+					"name": "Boleta gravada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"company_id\": 5,\n    \"branch_id\": 1,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-06-09\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"resumen_diario\",\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"12345678\",\n      \"razon_social\": \"María Elena García Sánchez\",\n      \"nombre_comercial\": \"María García\",\n      \"direccion\": \"Av. Los Negocios 456, San Isidro\",\n      \"ubigeo\": \"150130\",\n      \"distrito\": \"San Isidro\",\n      \"provincia\": \"Lima\",\n      \"departamento\": \"Lima\",\n      \"telefono\": \"01-9876543\",\n      \"email\": \"maria.garcia@email.com\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"LAPTOP001\",\n        \"descripcion\": \"Laptop HP Pavilion 15.6\\\" Intel Core i5 8GB RAM\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 2542.37,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"43211507\"\n      },\n      {\n        \"codigo\": \"SERV001\",\n        \"descripcion\": \"Servicio de instalación y configuración\",\n        \"unidad\": \"ZZ\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 169.49,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"81112200\"\n      }\n    ],\n    \"usuario_creacion\": \"vendedor01\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/boletas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boletas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Boleta gravada y exonerada Copy",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"company_id\": 5,\n    \"branch_id\": 1,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-06-09\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"resumen_diario\",\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"12345678\",\n      \"razon_social\": \"María Elena García Sánchez\",\n      \"nombre_comercial\": \"María García\",\n      \"direccion\": \"Av. Los Negocios 456, San Isidro\",\n      \"ubigeo\": \"150130\",\n      \"distrito\": \"San Isidro\",\n      \"provincia\": \"Lima\",\n      \"departamento\": \"Lima\",\n      \"telefono\": \"01-9876543\",\n      \"email\": \"maria.garcia@email.com\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"LAPTOP001\",\n        \"descripcion\": \"Laptop HP Pavilion 15.6\\\" Intel Core i5 8GB RAM\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 2542.37,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"43211507\"\n      },\n      {\n        \"codigo\": \"LIBRO001\",\n        \"descripcion\": \"Libro de matemáticas educativo nivel secundaria\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 3,\n        \"mto_valor_unitario\": 50.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"55101500\"\n      },\n      {\n        \"codigo\": \"MED001\",\n        \"descripcion\": \"Medicamento genérico - Paracetamol 500mg\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 2,\n        \"mto_valor_unitario\": 12.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"51161500\"\n      },\n      {\n        \"codigo\": \"SERV001\",\n        \"descripcion\": \"Servicio de instalación y configuración\",\n        \"unidad\": \"ZZ\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 169.49,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"81112200\"\n      }\n    ],\n    \"usuario_creacion\": \"vendedor01\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/boletas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boletas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Boleta gravada y exonerada Copy 2",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"company_id\": 5,\n    \"branch_id\": 1,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-06-09\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"resumen_diario\",\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"12345678\",\n      \"razon_social\": \"María Elena García Sánchez\",\n      \"nombre_comercial\": \"María García\",\n      \"direccion\": \"Av. Los Negocios 456, San Isidro\",\n      \"ubigeo\": \"150130\",\n      \"distrito\": \"San Isidro\",\n      \"provincia\": \"Lima\",\n      \"departamento\": \"Lima\",\n      \"telefono\": \"01-9876543\",\n      \"email\": \"maria.garcia@email.com\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"LAPTOP001\",\n        \"descripcion\": \"Laptop HP Pavilion 15.6\\\" Intel Core i5 8GB RAM\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 2542.37,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"43211507\"\n      },\n      {\n        \"codigo\": \"LIBRO001\",\n        \"descripcion\": \"Libro de matemáticas educativo nivel secundaria\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 3,\n        \"mto_valor_unitario\": 50.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"55101500\"\n      },\n      {\n        \"codigo\": \"MED001\",\n        \"descripcion\": \"Medicamento genérico - Paracetamol 500mg\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 2,\n        \"mto_valor_unitario\": 12.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"51161500\"\n      },\n      {\n        \"codigo\": \"SERV001\",\n        \"descripcion\": \"Servicio de instalación y configuración\",\n        \"unidad\": \"ZZ\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 169.49,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"81112200\"\n      }\n    ],\n    \"usuario_creacion\": \"vendedor01\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/boletas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boletas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Boleta Exonerada - Material Educativo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"scenario\": \"Boleta Exonerada - Material Educativo\",\n    \"company_id\": 5,\n    \"branch_id\": 1,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-01-06\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"individual\",\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"87654321\",\n      \"razon_social\": \"Carlos Alberto Mendoza Torres\",\n      \"direccion\": \"Jr. Educación 789, Pueblo Libre\",\n      \"telefono\": \"01-7654321\",\n      \"email\": \"carlos.mendoza@estudiante.edu.pe\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"LIB001\",\n        \"descripcion\": \"LIBRO DE TEXTO - Matemáticas Avanzadas para Secundaria\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 2,\n        \"mto_valor_unitario\": 85.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"55101500\"\n      },\n      {\n        \"codigo\": \"REV001\",\n        \"descripcion\": \"REVISTA CIENTÍFICA - Investigación en Ciencias Vol. 2025\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 45.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"55102000\"\n      },\n      {\n        \"codigo\": \"CUA001\",\n        \"descripcion\": \"CUADERNOS UNIVERSITARIOS A4 x 100 hojas (Pack x5)\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 3,\n        \"mto_valor_unitario\": 25.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"55121500\"\n      }\n    ],\n    \"usuario_creacion\": \"educacion01\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/boletas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"boletas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Boleta Exonerada - Medicamentos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 2|sunat_beta_nssgIjrjpbRlcCr7COMwik0xLf5MdZUjs3jVmhl875670cb4",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"scenario\": \"Boleta Exonerada - Medicamentos\",\n    \"company_id\": 2,\n    \"branch_id\": 2,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-01-06\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"resumen_diario\",\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"11223344\",\n      \"razon_social\": \"Ana Sofía Vásquez Ramírez\",\n      \"direccion\": \"Av. Salud 456, La Victoria\",\n      \"telefono\": \"01-5551234\",\n      \"email\": \"ana.vasquez@email.com\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"MED001\",\n        \"descripcion\": \"PARACETAMOL 500mg - Caja x 100 tabletas\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 2,\n        \"mto_valor_unitario\": 15.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"51161500\"\n      },\n      {\n        \"codigo\": \"MED002\",\n        \"descripcion\": \"IBUPROFENO 400mg - Caja x 50 cápsulas\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 25.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"51161500\"\n      },\n      {\n        \"codigo\": \"MED003\",\n        \"descripcion\": \"JARABE PARA LA TOS - Frasco 120ml\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 18.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\",\n        \"codigo_producto_sunat\": \"51161500\"\n      }\n    ],\n    \"usuario_creacion\": \"farmacia01\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/boletas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"boletas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Boleta Mixta Completa",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"scenario\": \"Boleta Mixta Completa\",\n    \"company_id\": 1,\n    \"branch_id\": 1,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-01-06\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"resumen_diario\",\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"66778899\",\n      \"razon_social\": \"Empresa Mixta SAC\",\n      \"direccion\": \"Av. Completa 777, San Miguel\",\n      \"telefono\": \"01-6677889\",\n      \"email\": \"empresa.mixta@email.com\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"GRAV001\",\n        \"descripcion\": \"Producto Gravado\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 2,\n        \"mto_valor_unitario\": 100.00,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\"\n      },\n      {\n        \"codigo\": \"EXON001\",\n        \"descripcion\": \"Producto Exonerado\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 3,\n        \"mto_valor_unitario\": 50.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"20\"\n      },\n      {\n        \"codigo\": \"INAF001\",\n        \"descripcion\": \"Producto Inafecto\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 80.00,\n        \"porcentaje_igv\": 0,\n        \"tip_afe_igv\": \"30\"\n      },\n      {\n        \"codigo\": \"GRAT001\",\n        \"descripcion\": \"Producto Gratuito\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 0.00,\n        \"mto_valor_gratuito\": 25.00,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"11\"\n      }\n    ],\n    \"usuario_creacion\": \"vendedor09\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/boletas",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"boletas"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generar PDF A4",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 2|sunat_beta_g2PXpDwobhYDoarrm1H5HfhehoIPuAdwz557o2Iwcc77977f",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"format\": \"A4\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/{{boletaId}}/generate-pdf",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"{{boletaId}}",
+								"generate-pdf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Generar PDF Ticket 80mm",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"format\": \"80mm\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/boletas/{{boletaId}}/generate-pdf",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"boletas",
+								"{{boletaId}}",
+								"generate-pdf"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Descargar PDF",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 2|sunat_beta_g2PXpDwobhYDoarrm1H5HfhehoIPuAdwz557o2Iwcc77977f",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/{{boletaId}}/download-pdf?format=A4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"{{boletaId}}",
+								"download-pdf"
+							],
+							"query": [
+								{
+									"key": "format",
+									"value": "A4"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Crear Resumen Diario",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\n    \"company_id\": 1,\n    \"branch_id\": 1,\n    \"fecha_resumen\": \"2025-06-09\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/boletas/create-daily-summary",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"boletas",
+								"create-daily-summary"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enviar Resumen a SUNAT",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 2|sunat_beta_KmzEWP9DT60myHefMsFmFXyVZ1lV3The4cyRcURR1dff1624",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/daily-summaries/1/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"daily-summaries",
+								"1",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Verificar Estado Resumen",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 2|sunat_beta_KmzEWP9DT60myHefMsFmFXyVZ1lV3The4cyRcURR1dff1624",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/daily-summaries/1/check-status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"daily-summaries",
+								"1",
+								"check-status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Boletas",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/boletas?company_id=1&branch_id=1&per_page=20",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"boletas"
+							],
+							"query": [
+								{
+									"key": "company_id",
+									"value": "1"
+								},
+								{
+									"key": "branch_id",
+									"value": "1"
+								},
+								{
+									"key": "per_page",
+									"value": "20"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Ver Formatos PDF Disponibles",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8000/api/v1/pdf/formats",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"pdf",
+								"formats"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. Facturas ✅",
+			"item": [
+				{
+					"name": "Factura gravada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"company_id\": 1,\r\n    \"branch_id\": 1,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-15\",\r\n    \"fecha_vencimiento\": \"2025-10-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20123456789\",\r\n      \"razon_social\": \"EMPRESA CLIENTE SAC\",\r\n      \"nombre_comercial\": \"Cliente Comercial\",\r\n      \"direccion\": \"Av. Los Negocios 123, Miraflores\",\r\n      \"ubigeo\": \"150140\",\r\n      \"distrito\": \"Miraflores\",\r\n      \"provincia\": \"Lima\",\r\n      \"departamento\": \"Lima\",\r\n      \"telefono\": \"01-2345678\",\r\n      \"email\": \"cliente@empresa.com\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"PROD001\",\r\n        \"descripcion\": \"Laptop HP Pavilion 15.6\\\" Intel Core i5\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 2,\r\n        \"mto_valor_unitario\": 2542.37,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"10\",\r\n        \"codigo_producto_sunat\": \"43211507\"\r\n      },\r\n      {\r\n        \"codigo\": \"SERV001\",\r\n        \"descripcion\": \"Servicio de instalación y configuración\",\r\n        \"unidad\": \"ZZ\",\r\n        \"cantidad\": 1,\r\n        \"mto_valor_unitario\": 847.46,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"10\",\r\n        \"codigo_producto_sunat\": \"81112200\"\r\n      }\r\n    ],\r\n    \"usuario_creacion\": \"admin\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura exonerada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"company_id\": 1,\r\n    \"branch_id\": 1,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-15\",\r\n    \"fecha_vencimiento\": \"2025-10-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20123456789\",\r\n      \"razon_social\": \"EMPRESA CLIENTE SAC\",\r\n      \"nombre_comercial\": \"Cliente Comercial\",\r\n      \"direccion\": \"Av. Los Negocios 123, Miraflores\",\r\n      \"ubigeo\": \"150140\",\r\n      \"distrito\": \"Miraflores\",\r\n      \"provincia\": \"Lima\",\r\n      \"departamento\": \"Lima\",\r\n      \"telefono\": \"01-2345678\",\r\n      \"email\": \"cliente@empresa.com\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"LIBRO001\",\r\n        \"descripcion\": \"Libro de matemáticas educativo\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 5,\r\n        \"mto_valor_unitario\": 50.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"55101500\"\r\n      },\r\n      {\r\n        \"codigo\": \"MED001\",\r\n        \"descripcion\": \"Medicamento genérico - Paracetamol 500mg\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 10,\r\n        \"mto_valor_unitario\": 12.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"51161500\"\r\n      }\r\n    ],\r\n    \"usuario_creacion\": \"admin\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura gravada y exonerada",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{access_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"company_id\": 1,\r\n    \"branch_id\": 1,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-15\",\r\n    \"fecha_vencimiento\": \"2025-10-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20123456789\",\r\n      \"razon_social\": \"EMPRESA CLIENTE SAC\",\r\n      \"nombre_comercial\": \"Cliente Comercial\",\r\n      \"direccion\": \"Av. Los Negocios 123, Miraflores\",\r\n      \"ubigeo\": \"150140\",\r\n      \"distrito\": \"Miraflores\",\r\n      \"provincia\": \"Lima\",\r\n      \"departamento\": \"Lima\",\r\n      \"telefono\": \"01-2345678\",\r\n      \"email\": \"cliente@empresa.com\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"PROD001\",\r\n        \"descripcion\": \"Laptop HP Pavilion 15.6\\\" Intel Core i5\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 2,\r\n        \"mto_valor_unitario\": 2542.37,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"10\",\r\n        \"codigo_producto_sunat\": \"43211507\"\r\n      },\r\n      {\r\n        \"codigo\": \"LIBRO001\",\r\n        \"descripcion\": \"Libro de matemáticas educativo\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 5,\r\n        \"mto_valor_unitario\": 50.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"55101500\"\r\n      },\r\n      {\r\n        \"codigo\": \"MED001\",\r\n        \"descripcion\": \"Medicamento genérico - Paracetamol 500mg\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 10,\r\n        \"mto_valor_unitario\": 12.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"51161500\"\r\n      },\r\n      {\r\n        \"codigo\": \"SERV001\",\r\n        \"descripcion\": \"Servicio de instalación y configuración\",\r\n        \"unidad\": \"ZZ\",\r\n        \"cantidad\": 1,\r\n        \"mto_valor_unitario\": 847.46,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"10\",\r\n        \"codigo_producto_sunat\": \"81112200\"\r\n      }\r\n    ],\r\n    \"usuario_creacion\": \"admin\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura Exonerada - Material Educativo",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"scenario\": \"Factura Exonerada - Material Educativo\",\r\n    \"company_id\": 2,\r\n    \"branch_id\": 2,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-04\",\r\n    \"fecha_vencimiento\": \"2025-09-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20123456789\",\r\n      \"razon_social\": \"UNIVERSIDAD SAN MARCOS\",\r\n      \"direccion\": \"Av. Universitaria 123, Lima\",\r\n      \"telefono\": \"01-2345678\",\r\n      \"email\": \"compras@unmsm.edu.pe\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"LIB001\",\r\n        \"descripcion\": \"LIBRO DE TEXTO - Matemáticas Avanzadas para Ingeniería\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 500,\r\n        \"mto_valor_unitario\": 85.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"55101500\"\r\n      },\r\n      {\r\n        \"codigo\": \"REV001\",\r\n        \"descripcion\": \"REVISTA CIENTÍFICA - Investigación en Ciencias Vol. 2025\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 200,\r\n        \"mto_valor_unitario\": 45.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"55102000\"\r\n      }\r\n    ],\r\n    \"usuario_creacion\": \"educacion01\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/8/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"8",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura Exonerada - Medicamentos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"scenario\": \"Factura Exonerada - Medicamentos\",\r\n    \"company_id\": 2,\r\n    \"branch_id\": 2,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20234567890\",\r\n      \"razon_social\": \"HOSPITAL NACIONAL DOS DE MAYO\",\r\n      \"direccion\": \"Av. Grau 13, Cercado de Lima\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"MED001\",\r\n        \"descripcion\": \"PARACETAMOL 500mg - Tableta (uso humano)\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 10000,\r\n        \"mto_valor_unitario\": 0.25,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"51161500\"\r\n      },\r\n      {\r\n        \"codigo\": \"MED002\",\r\n        \"descripcion\": \"AMOXICILINA 500mg - Cápsula (uso humano)\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 5000,\r\n        \"mto_valor_unitario\": 0.80,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"51121500\"\r\n      },\r\n      {\r\n        \"codigo\": \"MED003\",\r\n        \"descripcion\": \"INSULINA HUMANA - Vial 10ml (uso diabético)\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 500,\r\n        \"mto_valor_unitario\": 45.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"51181500\"\r\n      }\r\n    ]\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/9/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"9",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura Exonerada - Servicios Educativos",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"scenario\": \"Factura Exonerada - Servicios Educativos\",\r\n    \"company_id\": 2,\r\n    \"branch_id\": 2,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20345678901\",\r\n      \"razon_social\": \"JUAN CARLOS MENDOZA TORRES\",\r\n      \"direccion\": \"Av. Los Estudiantes 789, San Borja\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"EDU001\",\r\n        \"descripcion\": \"MATRÍCULA ANUAL - Carrera de Ingeniería de Sistemas\",\r\n        \"unidad\": \"ZZ\",\r\n        \"cantidad\": 1,\r\n        \"mto_valor_unitario\": 1200.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"86121600\"\r\n      },\r\n      {\r\n        \"codigo\": \"EDU002\",\r\n        \"descripcion\": \"MENSUALIDAD MARZO 2025 - Carrera de Ingeniería\",\r\n        \"unidad\": \"ZZ\",\r\n        \"cantidad\": 1,\r\n        \"mto_valor_unitario\": 850.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"86121600\"\r\n      }\r\n    ]\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/11/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"11",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura gravada (Credito)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"scenario\": \"Factura Crédito 2 (3 Cuotas)\",\r\n  \"company_id\": 2,\r\n  \"branch_id\": 2,\r\n  \"serie\": \"F001\",\r\n  \"fecha_emision\": \"2025-09-04\",\r\n  \"fecha_vencimiento\": \"2025-12-04\",\r\n  \"moneda\": \"PEN\",\r\n  \"tipo_operacion\": \"0101\",\r\n  \"forma_pago_tipo\": \"Credito\",\r\n  \"forma_pago_cuotas\": [\r\n    {\r\n      \"moneda\": \"PEN\",\r\n      \"monto\": 2360.00,\r\n      \"fecha_pago\": \"2025-10-04\"\r\n    },\r\n    {\r\n      \"moneda\": \"PEN\",\r\n      \"monto\": 2360.00,\r\n      \"fecha_pago\": \"2025-11-04\"\r\n    },\r\n    {\r\n      \"moneda\": \"PEN\",\r\n      \"monto\": 2360.00,\r\n      \"fecha_pago\": \"2025-12-04\"\r\n    }\r\n  ],\r\n  \"client\": {\r\n    \"tipo_documento\": \"6\",\r\n    \"numero_documento\": \"20444555666\",\r\n    \"razon_social\": \"CONSTRUCTORA DEL NORTE SAC\",\r\n    \"direccion\": \"Av. La Marina 2000, San Miguel\"\r\n  },\r\n  \"detalles\": [\r\n    {\r\n      \"codigo\": \"MAQ001\",\r\n      \"descripcion\": \"Mezcladora de concreto industrial\",\r\n      \"unidad\": \"NIU\",\r\n      \"cantidad\": 1,\r\n      \"mto_valor_unitario\": 6000.00,\r\n      \"porcentaje_igv\": 18,\r\n      \"tip_afe_igv\": \"10\"\r\n    }\r\n  ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/13/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"13",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura exonerada (Credito)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"scenario\": \"Factura Exonerada al Crédito (3 Cuotas)\",\r\n    \"company_id\": 2,\r\n    \"branch_id\": 2,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-04\",\r\n    \"fecha_vencimiento\": \"2025-12-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Credito\",\r\n    \"forma_pago_cuotas\": [\r\n      {\r\n        \"moneda\": \"PEN\",\r\n        \"monto\": 2000.00,\r\n        \"fecha_pago\": \"2025-10-04\"\r\n      },\r\n      {\r\n        \"moneda\": \"PEN\",\r\n        \"monto\": 2000.00,\r\n        \"fecha_pago\": \"2025-11-04\"\r\n      },\r\n      {\r\n        \"moneda\": \"PEN\",\r\n        \"monto\": 2000.00,\r\n        \"fecha_pago\": \"2025-12-04\"\r\n      }\r\n    ],\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20123456789\",\r\n      \"razon_social\": \"INSTITUTO EDUCATIVO PERUANO SAC\",\r\n      \"direccion\": \"Av. Educación 123, San Borja\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"LIB001\",\r\n        \"descripcion\": \"Libros de matemáticas educativas - Paquete completo\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 1,\r\n        \"mto_valor_unitario\": 6000.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\"\r\n      }\r\n    ]\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/14/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"14",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura gratuita",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"scenario\": \"Factura Gratuita Corregida\",\r\n    \"company_id\": 2,\r\n    \"branch_id\": 2,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-04\",\r\n    \"fecha_vencimiento\": \"2025-09-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20111222333\",\r\n      \"razon_social\": \"DISTRIBUIDORA NORTE PERU SAC\",\r\n      \"direccion\": \"Av. Promociones 456, San Isidro\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"P001\",\r\n        \"descripcion\": \"Muestra gratuita - Shampoo anticaspa 50ml\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 2,\r\n        \"mto_valor_unitario\": 0.00,\r\n        \"mto_valor_gratuito\": 100.00,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"11\"\r\n      },\r\n      {\r\n        \"codigo\": \"P002\",\r\n        \"descripcion\": \"Premio promocional - Crema hidratante 30ml\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 1,\r\n        \"mto_valor_unitario\": 0.00,\r\n        \"mto_valor_gratuito\": 50.00,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"13\"\r\n      }\r\n    ]\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura con items gravado, exonerado, inafecto y gratuitos.",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"scenario\": \"Factura Mixta Completa (Gravado + Exonerado + Inafecto + Gratuito)\",\r\n    \"company_id\": 2,\r\n    \"branch_id\": 2,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-04\",\r\n    \"fecha_vencimiento\": \"2025-10-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"tipo_operacion\": \"0101\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20567890123\",\r\n      \"razon_social\": \"EMPRESA COMERCIAL MULTIRUBRO SAC\",\r\n      \"direccion\": \"Av. Los Comerciantes 789, Miraflores\",\r\n      \"telefono\": \"01-5678901\",\r\n      \"email\": \"ventas@comercialmultirubro.com\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"GRAV001\",\r\n        \"descripcion\": \"Laptop Dell Inspiron 15 - Uso comercial\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 2,\r\n        \"mto_valor_unitario\": 2500.00,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"10\",\r\n        \"codigo_producto_sunat\": \"43211507\"\r\n      },\r\n      {\r\n        \"codigo\": \"EXON001\",\r\n        \"descripcion\": \"Libro de contabilidad empresarial - Manual técnico\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 5,\r\n        \"mto_valor_unitario\": 80.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"20\",\r\n        \"codigo_producto_sunat\": \"55101500\"\r\n      },\r\n      {\r\n        \"codigo\": \"INAF001\",\r\n        \"descripcion\": \"Arroz integral orgánico - Bolsa 5kg\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 10,\r\n        \"mto_valor_unitario\": 25.00,\r\n        \"porcentaje_igv\": 0,\r\n        \"tip_afe_igv\": \"30\",\r\n        \"codigo_producto_sunat\": \"50161500\"\r\n      },\r\n      {\r\n        \"codigo\": \"GRAT001\",\r\n        \"descripcion\": \"Muestra promocional - USB publicitario 16GB\",\r\n        \"unidad\": \"NIU\",\r\n        \"cantidad\": 20,\r\n        \"mto_valor_unitario\": 0.00,\r\n        \"mto_valor_gratuito\": 15.00,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"11\",\r\n        \"codigo_producto_sunat\": \"43172000\"\r\n      },\r\n      {\r\n        \"codigo\": \"GRAV002\",\r\n        \"descripcion\": \"Servicio de consultoría empresarial\",\r\n        \"unidad\": \"ZZ\",\r\n        \"cantidad\": 1,\r\n        \"mto_valor_unitario\": 1500.00,\r\n        \"porcentaje_igv\": 18,\r\n        \"tip_afe_igv\": \"10\",\r\n        \"codigo_producto_sunat\": \"80111500\"\r\n      }\r\n    ],\r\n    \"usuario_creacion\": \"vendedor03\"\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/16/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"16",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Factura con IVAP (Arroz pilado)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer 4|sunat_beta_5g4rYfVCB1sqKzCzTUgGi7cTFbaSL9pz4yDAj39w6b16880c",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n    \"company_id\": 2,\r\n    \"branch_id\": 2,\r\n    \"serie\": \"F001\",\r\n    \"fecha_emision\": \"2025-09-04\",\r\n    \"moneda\": \"PEN\",\r\n    \"forma_pago_tipo\": \"Contado\",\r\n    \"client\": {\r\n      \"tipo_documento\": \"6\",\r\n      \"numero_documento\": \"20567890123\",\r\n      \"razon_social\": \"DISTRIBUIDORA DE ARROZ DEL NORTE SAC\"\r\n    },\r\n    \"detalles\": [\r\n      {\r\n        \"codigo\": \"A001\",\r\n        \"descripcion\": \"ARROZ PILADO EXTRA - Saco 50kg\",\r\n        \"unidad\": \"SA\",\r\n        \"cantidad\": 100,\r\n        \"mto_valor_unitario\": 120.00,\r\n        \"porcentaje_igv\": 4,\r\n        \"tip_afe_igv\": \"17\"\r\n      }\r\n    ]\r\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8000/api/v1/invoices/17/send-sunat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8000",
+							"path": [
+								"api",
+								"v1",
+								"invoices",
+								"17",
+								"send-sunat"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

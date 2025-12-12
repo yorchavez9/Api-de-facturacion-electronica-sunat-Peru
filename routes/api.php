@@ -4,24 +4,16 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\InvoiceController;
 use App\Http\Controllers\Api\BoletaController;
-use App\Http\Controllers\Api\DailySummaryController;
-use App\Http\Controllers\Api\CreditNoteController;
-use App\Http\Controllers\Api\DebitNoteController;
-use App\Http\Controllers\Api\RetentionController;
-use App\Http\Controllers\Api\VoidedDocumentController;
-use App\Http\Controllers\Api\DispatchGuideController;
 use App\Http\Controllers\Api\PdfController;
 use App\Http\Controllers\Api\CompanyConfigController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\BranchController;
 use App\Http\Controllers\Api\ClientController;
 use App\Http\Controllers\Api\CorrelativeController;
-use App\Http\Controllers\Api\GreCredentialsController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ConsultaCpeController;
 use App\Http\Controllers\Api\SetupController;
 use App\Http\Controllers\Api\UbigeoController;
-use App\Http\Controllers\Api\ConsultaCpeControllerMejorado;
 
 // ========================
 // RUTAS PÚBLICAS (SIN AUTENTICACIÓN)
@@ -106,25 +98,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
     });
 
     // ========================
-    // CREDENCIALES GRE
-    // ========================
-    
-    // Credenciales GRE por empresa
-    Route::prefix('companies/{company}/gre-credentials')->group(function () {
-        Route::get('/', [GreCredentialsController::class, 'show']);
-        Route::put('/', [GreCredentialsController::class, 'update']);
-        Route::post('/test-connection', [GreCredentialsController::class, 'testConnection']);
-        Route::delete('/clear', [GreCredentialsController::class, 'clear']);
-        Route::post('/copy', [GreCredentialsController::class, 'copy']);
-    });
-
-    // Credenciales GRE - Configuraciones globales
-    Route::prefix('gre-credentials')->group(function () {
-        Route::get('/defaults/{mode}', [GreCredentialsController::class, 'getDefaults'])
-            ->where('mode', 'beta|produccion');
-    });
-
-    // ========================
     // SUCURSALES
     // ========================
     Route::apiResource('branches', BranchController::class);
@@ -183,100 +156,6 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         Route::get('/{id}/download-cdr', [BoletaController::class, 'downloadCdr']);
         Route::get('/{id}/download-pdf', [BoletaController::class, 'downloadPdf']);
         Route::post('/{id}/generate-pdf', [BoletaController::class, 'generatePdf']);
-
-        // Funciones de resumen diario desde boletas
-        Route::get('/pending-for-summary', [BoletaController::class, 'getBoletsasPendingForSummary']);
-        Route::post('/create-daily-summary', [BoletaController::class, 'createDailySummaryFromDate']);
-        Route::post('/summary/{id}/send-sunat', [BoletaController::class, 'sendSummaryToSunat']);
-        Route::post('/summary/{id}/check-status', [BoletaController::class, 'checkSummaryStatus']);
-    });
-
-    // Resúmenes Diarios
-    Route::prefix('daily-summaries')->group(function () {
-        Route::get('/', [DailySummaryController::class, 'index']);
-        Route::post('/', [DailySummaryController::class, 'store']);
-        Route::get('/{id}', [DailySummaryController::class, 'show']);
-        Route::post('/{id}/send-sunat', [DailySummaryController::class, 'sendToSunat']);
-        Route::post('/{id}/check-status', [DailySummaryController::class, 'checkStatus']);
-        Route::get('/{id}/download-xml', [DailySummaryController::class, 'downloadXml']);
-        Route::get('/{id}/download-cdr', [DailySummaryController::class, 'downloadCdr']);
-        Route::get('/{id}/download-pdf', [DailySummaryController::class, 'downloadPdf']);
-        Route::post('/{id}/generate-pdf', [DailySummaryController::class, 'generatePdf']);
-
-        // Funciones de gestión masiva
-        Route::get('/pending', [DailySummaryController::class, 'getPendingSummaries']);
-        Route::post('/check-all-pending', [DailySummaryController::class, 'checkAllPendingStatus']);
-    });
-
-    // Notas de Crédito
-    Route::prefix('credit-notes')->group(function () {
-        Route::get('/', [CreditNoteController::class, 'index']);
-        Route::post('/', [CreditNoteController::class, 'store']);
-        Route::get('/{id}', [CreditNoteController::class, 'show']);
-        Route::post('/{id}/send-sunat', [CreditNoteController::class, 'sendToSunat']);
-        Route::get('/{id}/download-xml', [CreditNoteController::class, 'downloadXml']);
-        Route::get('/{id}/download-cdr', [CreditNoteController::class, 'downloadCdr']);
-        Route::get('/{id}/download-pdf', [CreditNoteController::class, 'downloadPdf']);
-        Route::post('/{id}/generate-pdf', [CreditNoteController::class, 'generatePdf']);
-
-        // Catálogo de motivos
-        Route::get('/catalogs/motivos', [CreditNoteController::class, 'getMotivos']);
-    });
-
-    // Notas de Débito
-    Route::prefix('debit-notes')->group(function () {
-        Route::get('/', [DebitNoteController::class, 'index']);
-        Route::post('/', [DebitNoteController::class, 'store']);
-        Route::get('/{id}', [DebitNoteController::class, 'show']);
-        Route::post('/{id}/send-sunat', [DebitNoteController::class, 'sendToSunat']);
-        Route::get('/{id}/download-xml', [DebitNoteController::class, 'downloadXml']);
-        Route::get('/{id}/download-cdr', [DebitNoteController::class, 'downloadCdr']);
-        Route::get('/{id}/download-pdf', [DebitNoteController::class, 'downloadPdf']);
-        Route::post('/{id}/generate-pdf', [DebitNoteController::class, 'generatePdf']);
-
-        // Catálogo de motivos
-        Route::get('/catalogs/motivos', [DebitNoteController::class, 'getMotivos']);
-    });
-
-    // Comprobantes de Retención
-    Route::prefix('retentions')->group(function () {
-        Route::get('/', [RetentionController::class, 'index']);
-        Route::post('/', [RetentionController::class, 'store']);
-        Route::get('/{id}', [RetentionController::class, 'show']);
-        Route::post('/{id}/send-sunat', [RetentionController::class, 'sendToSunat']);
-        Route::get('/{id}/download-xml', [RetentionController::class, 'downloadXml']);
-        Route::get('/{id}/download-cdr', [RetentionController::class, 'downloadCdr']);
-        Route::get('/{id}/download-pdf', [RetentionController::class, 'downloadPdf']);
-        Route::post('/{id}/generate-pdf', [RetentionController::class, 'generatePdf']);
-    });
-
-    // Comunicaciones de Baja
-    Route::prefix('voided-documents')->group(function () {
-        Route::get('/', [VoidedDocumentController::class, 'index']);
-        Route::post('/', [VoidedDocumentController::class, 'store']);
-        Route::get('/available-documents', [VoidedDocumentController::class, 'getDocumentsForVoiding']);
-        Route::get('/{id}', [VoidedDocumentController::class, 'show']);
-        Route::post('/{id}/send-sunat', [VoidedDocumentController::class, 'sendToSunat']);
-        Route::post('/{id}/check-status', [VoidedDocumentController::class, 'checkStatus']);
-        Route::get('/{id}/download-xml', [VoidedDocumentController::class, 'downloadXml']);
-        Route::get('/{id}/download-cdr', [VoidedDocumentController::class, 'downloadCdr']);
-    });
-
-    // Guías de Remisión
-    Route::prefix('dispatch-guides')->group(function () {
-        Route::get('/', [DispatchGuideController::class, 'index']);
-        Route::post('/', [DispatchGuideController::class, 'store']);
-        Route::get('/{id}', [DispatchGuideController::class, 'show']);
-        Route::post('/{id}/send-sunat', [DispatchGuideController::class, 'sendToSunat']);
-        Route::post('/{id}/check-status', [DispatchGuideController::class, 'checkStatus']);
-        Route::get('/{id}/download-xml', [DispatchGuideController::class, 'downloadXml']);
-        Route::get('/{id}/download-cdr', [DispatchGuideController::class, 'downloadCdr']);
-        Route::get('/{id}/download-pdf', [DispatchGuideController::class, 'downloadPdf']);
-        Route::post('/{id}/generate-pdf', [DispatchGuideController::class, 'generatePdf']);
-
-        // Catálogos
-        Route::get('/catalogs/transfer-reasons', [DispatchGuideController::class, 'getTransferReasons']);
-        Route::get('/catalogs/transport-modes', [DispatchGuideController::class, 'getTransportModes']);
     });
 
     // ========================
@@ -286,12 +165,10 @@ Route::prefix('v1')->middleware('auth:sanctum')->group(function () {
         // Consultas individuales por tipo de documento
         Route::post('/factura/{id}', [ConsultaCpeController::class, 'consultarFactura']);
         Route::post('/boleta/{id}', [ConsultaCpeController::class, 'consultarBoleta']);
-        Route::post('/nota-credito/{id}', [ConsultaCpeController::class, 'consultarNotaCredito']);
-        Route::post('/nota-debito/{id}', [ConsultaCpeController::class, 'consultarNotaDebito']);
-        
+
         // Consulta masiva
         Route::post('/masivo', [ConsultaCpeController::class, 'consultarDocumentosMasivo']);
-        
+
         // Estadísticas de consultas
         Route::get('/estadisticas', [ConsultaCpeController::class, 'estadisticasConsultas']);
     });

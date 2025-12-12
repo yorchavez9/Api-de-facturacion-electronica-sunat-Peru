@@ -18,22 +18,11 @@ Sistema completo de facturación electrónica para SUNAT Perú desarrollado con 
 ### Documentos Electrónicos Soportados
 - ✅ **Facturas** (Tipo 01)
 - ✅ **Boletas de Venta** (Tipo 03) 
-- ✅ **Notas de Crédito** (Tipo 07)
-- ✅ **Notas de Débito** (Tipo 08)
-- ✅ **Guías de Remisión** (Tipo 09)
-- ✅ **Resúmenes Diarios** (RC)
-- ✅ **Comunicaciones de Baja** (RA)
-- ✅ **Retenciones y Percepciones**
 
 ### Funcionalidades del Sistema
 - 🏢 **Multi-empresa**: Gestión de múltiples empresas y sucursales
 - 🔐 **Autenticación OAuth2** para APIs de SUNAT
 - 📄 **Generación automática de PDF** con diseño profesional
-- 📊 **Consulta de CPE** (Comprobantes de Pago Electrónicos)
-- 💰 **Cálculo automático de impuestos** (IGV, IVAP, ISC, ICBPER)
-- 📱 **API REST completa** con documentación
-- 🔄 **Sincronización con SUNAT** en tiempo real
-- 📈 **Reportes y estadísticas** de facturación
 
 ### Tecnologías Utilizadas
 - **Framework**: Laravel 12 con PHP 8.2+
