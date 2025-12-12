@@ -1,11 +1,3 @@
 
 Ruc a usar de prueba: 20161515648
 Clave certificado: 123456
-
-
-
-Credenciales para las guias de remision (Solo en beta).
-
-Client Id: test-85e5b0ae-255c-4891-a595-0b98c65c9854
-Client secret: test-Hty/M6QshYvPgItX2P0+Kw==
-
