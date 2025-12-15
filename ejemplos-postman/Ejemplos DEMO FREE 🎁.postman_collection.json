@@ -1,7 +1,7 @@
 {
 	"info": {
 		"_postman_id": "69f336d2-67f0-43c1-85b9-104b51bbcf27",
-		"name": "Ejemplos DEMO",
+		"name": "Ejemplos DEMO FREE 🎁",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "20633485",
 		"_collection_link": "https://api-go-facturacin-electrnica-sunat-peru.postman.co/workspace/API-GO-FACTURACI%25C3%2593N-ELECTR%25C3%2593NICA-~4d9d9944-99ee-4f5e-8be3-2f798a655d0c/collection/20633485-69f336d2-67f0-43c1-85b9-104b51bbcf27?action=share&source=collection_link&creator=20633485"
@@ -24,11 +24,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/setup/status",
+									"raw": "{{base_url}}/api/setup/status",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"setup",
 										"status"
 									]
@@ -48,11 +49,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/setup/migrate",
+									"raw": "{{base_url}}/api/setup/migrate",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"setup",
 										"migrate"
 									]
@@ -72,11 +74,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/setup/seed",
+									"raw": "{{base_url}}/api/setup/seed",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"setup",
 										"seed"
 									]
@@ -96,11 +99,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/system/info",
+									"raw": "{{base_url}}/api/system/info",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"system",
 										"info"
 									]
@@ -130,7 +134,9 @@
 											"    }",
 											"}"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -151,11 +157,12 @@
 									"raw": "{\n    \"name\": \"Administrador del Sistema\",\n    \"email\": \"admin@sistema-sunat.com\",\n    \"password\": \"Admin123!@#\",\n    \"password_confirmation\": \"Admin123!@#\"\n}"
 								},
 								"url": {
-									"raw": "{{base_url}}/auth/initialize",
+									"raw": "{{base_url}}/api/auth/initialize",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"auth",
 										"initialize"
 									]
@@ -184,7 +191,9 @@
 											"    }",
 											"}"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -205,11 +214,12 @@
 									"raw": "{\n    \"email\": \"admin@sistema-sunat.com\",\n    \"password\": \"Admin123!@#\",\n    \"token_name\": \"API Access Token\",\n    \"abilities\": [\"*\"]\n}"
 								},
 								"url": {
-									"raw": "{{base_url}}/auth/login",
+									"raw": "{{base_url}}/api/auth/login",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"auth",
 										"login"
 									]
@@ -336,7 +346,9 @@
 											"    }",
 											"}"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -353,11 +365,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/v1/companies",
+									"raw": "{{base_url}}/api/v1/companies",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"companies"
 									]
@@ -387,7 +400,8 @@
 											"}"
 										],
 										"type": "text/javascript",
-										"packages": {}
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -409,14 +423,15 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"ruc\": \"20123456789\",\n    \"razon_social\": \"EMPRESA DEMO SUNAT SAC\",\n    \"nombre_comercial\": \"Empresa Demo\",\n    \"direccion\": \"Av. República de Argentina 123\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"01-1234567\",\n    \"email\": \"contacto@empresademo.com\",\n    \"usuario_sol\": \"DEMOUSER\",\n    \"clave_sol\": \"Demo123456\",\n    \"modo_produccion\": 0\n}"
+									"raw": "{\n    \"ruc\": \"20123456789\",\n    \"razon_social\": \"EMPRESA DEMO SUNAT SAC\",\n    \"nombre_comercial\": \"Empresa Demo\",\n    \"direccion\": \"Av. República de Argentina 123\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"01-1234567\",\n    \"email\": \"contacto@empresademo.com\",\n    \"usuario_sol\": \"MODDATOS\",\n    \"clave_sol\": \"MODDATOS\",\n    \"modo_produccion\": 0\n}"
 								},
 								"url": {
-									"raw": "{{base_url}}/v1/companies",
+									"raw": "{{base_url}}/api/v1/companies",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"companies"
 									]
@@ -440,11 +455,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/v1/companies/{{company_id}}",
+									"raw": "{{base_url}}/api/v1/companies/{{company_id}}",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"companies",
 										"{{company_id}}"
@@ -515,7 +531,7 @@
 											"key": "logo_path",
 											"description": "Logo de la empresa",
 											"type": "file",
-											"src": "postman-cloud:///1efc21cc-1c21-4690-9baf-bf8f949348b1"
+											"src": "postman-cloud:///1f0d367c-0e28-4bd0-9c8b-7c28ad6cf446"
 										},
 										{
 											"key": "direccion",
@@ -560,11 +576,12 @@
 									]
 								},
 								"url": {
-									"raw": "{{base_url}}/v1/companies/{{company_id}}",
+									"raw": "{{base_url}}/api/v1/companies/{{company_id}}",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"companies",
 										"{{company_id}}"
@@ -628,7 +645,9 @@
 											"    }",
 											"}"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -653,11 +672,12 @@
 									"raw": "{\n    \"company_id\": {{company_id}},\n    \"codigo\": \"0001\",\n    \"nombre\": \"Sucursal Principal\",\n    \"direccion\": \"Av. República de Argentina 123\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"01-1234567\",\n    \"email\": \"principal@empresademo.com\"\n}"
 								},
 								"url": {
-									"raw": "{{base_url}}/v1/branches",
+									"raw": "{{base_url}}/api/v1/branches",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"branches"
 									]
@@ -681,11 +701,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/v1/companies/{{company_id}}/branches",
+									"raw": "{{base_url}}/api/v1/companies/{{company_id}}/branches",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"companies",
 										"{{company_id}}",
@@ -719,11 +740,12 @@
 									"raw": "{\n    \"correlativos\": [\n        {\n            \"tipo_documento\": \"01\",\n            \"serie\": \"F001\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"03\",\n            \"serie\": \"B001\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"07\",\n            \"serie\": \"FC01\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"08\",\n            \"serie\": \"FD01\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        },\n        {\n            \"tipo_documento\": \"09\",\n            \"serie\": \"T001\",\n            \"correlativo_actual\": 1,\n            \"activo\": true\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "{{base_url}}/v1/branches/{{branch_id}}/correlatives/batch",
+									"raw": "{{base_url}}/api/v1/branches/{{branch_id}}/correlatives/batch",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"branches",
 										"{{branch_id}}",
@@ -750,11 +772,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/v1/branches/{{branch_id}}/correlatives",
+									"raw": "{{base_url}}/api/v1/branches/{{branch_id}}/correlatives",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"branches",
 										"{{branch_id}}",
@@ -780,11 +803,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/v1/branches/{{branch_id}}/activate",
+									"raw": "{{base_url}}/api/v1/branches/{{branch_id}}/activate",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"branches",
 										"{{branch_id}}",
@@ -818,7 +842,9 @@
 											"    }",
 											"}"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -843,11 +869,12 @@
 									"raw": "{\n    \"company_id\": {{company_id}},\n    \"tipo_documento\": \"1\",\n    \"numero_documento\": \"12345678\",\n    \"razon_social\": \"Juan Carlos Pérez López\",\n    \"direccion\": \"Av. Los Incas 456\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"987654321\",\n    \"email\": \"juan.perez@email.com\"\n}"
 								},
 								"url": {
-									"raw": "{{base_url}}/v1/clients",
+									"raw": "{{base_url}}/api/v1/clients",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"clients"
 									]
@@ -873,7 +900,9 @@
 											"    }",
 											"}"
 										],
-										"type": "text/javascript"
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
 									}
 								}
 							],
@@ -898,11 +927,12 @@
 									"raw": "{\n    \"company_id\": {{company_id}},\n    \"tipo_documento\": \"6\",\n    \"numero_documento\": \"20987654321\",\n    \"razon_social\": \"CLIENTE CORPORATIVO SAC\",\n    \"nombre_comercial\": \"Cliente Corp\",\n    \"direccion\": \"Av. Javier Prado 1234\",\n    \"ubigeo\": \"150101\",\n    \"distrito\": \"Lima\",\n    \"provincia\": \"Lima\",\n    \"departamento\": \"Lima\",\n    \"telefono\": \"01-2345678\",\n    \"email\": \"contacto@clientecorp.com\"\n}"
 								},
 								"url": {
-									"raw": "{{base_url}}/v1/clients",
+									"raw": "{{base_url}}/api/v1/clients",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"clients"
 									]
@@ -1272,11 +1302,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{base_url}}/v1/pdf/formats",
+									"raw": "{{base_url}}/api/v1/pdf/formats",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"api",
 										"v1",
 										"pdf",
 										"formats"
@@ -1317,7 +1348,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"company_id\": 5,\n    \"branch_id\": 1,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-06-09\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"resumen_diario\",\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"12345678\",\n      \"razon_social\": \"María Elena García Sánchez\",\n      \"nombre_comercial\": \"María García\",\n      \"direccion\": \"Av. Los Negocios 456, San Isidro\",\n      \"ubigeo\": \"150130\",\n      \"distrito\": \"San Isidro\",\n      \"provincia\": \"Lima\",\n      \"departamento\": \"Lima\",\n      \"telefono\": \"01-9876543\",\n      \"email\": \"maria.garcia@email.com\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"LAPTOP001\",\n        \"descripcion\": \"Laptop HP Pavilion 15.6\\\" Intel Core i5 8GB RAM\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 2542.37,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"43211507\"\n      },\n      {\n        \"codigo\": \"SERV001\",\n        \"descripcion\": \"Servicio de instalación y configuración\",\n        \"unidad\": \"ZZ\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 169.49,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"81112200\"\n      }\n    ],\n    \"usuario_creacion\": \"vendedor01\"\n  }",
+							"raw": "{\n    \"company_id\": 1,\n    \"branch_id\": 1,\n    \"serie\": \"B001\",\n    \"fecha_emision\": \"2025-12-15\",\n    \"moneda\": \"PEN\",\n    \"tipo_operacion\": \"0101\",\n    \"metodo_envio\": \"resumen_diario\", // individual\n    \"forma_pago_tipo\": \"Contado\",\n    \"client\": {\n      \"tipo_documento\": \"1\",\n      \"numero_documento\": \"12345678\",\n      \"razon_social\": \"María Elena García Sánchez\",\n      \"nombre_comercial\": \"María García\",\n      \"direccion\": \"Av. Los Negocios 456, San Isidro\",\n      \"ubigeo\": \"150130\",\n      \"distrito\": \"San Isidro\",\n      \"provincia\": \"Lima\",\n      \"departamento\": \"Lima\",\n      \"telefono\": \"01-9876543\",\n      \"email\": \"maria.garcia@email.com\"\n    },\n    \"detalles\": [\n      {\n        \"codigo\": \"LAPTOP001\",\n        \"descripcion\": \"Laptop HP Pavilion 15.6\\\" Intel Core i5 8GB RAM\",\n        \"unidad\": \"NIU\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 2542.37,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"43211507\"\n      },\n      {\n        \"codigo\": \"SERV001\",\n        \"descripcion\": \"Servicio de instalación y configuración\",\n        \"unidad\": \"ZZ\",\n        \"cantidad\": 1,\n        \"mto_valor_unitario\": 169.49,\n        \"porcentaje_igv\": 18,\n        \"tip_afe_igv\": \"10\",\n        \"codigo_producto_sunat\": \"81112200\"\n      }\n    ],\n    \"usuario_creacion\": \"vendedor01\"\n  }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1325,14 +1356,16 @@
 							}
 						},
 						"url": {
-							"raw": "{{base_url}}/api/v1/boletas",
+							"raw": "{{base_url}}/api/v1/boletas/1/send-sunat",
 							"host": [
 								"{{base_url}}"
 							],
 							"path": [
 								"api",
 								"v1",
-								"boletas"
+								"boletas",
+								"1",
+								"send-sunat"
 							]
 						}
 					},
@@ -2413,6 +2446,52 @@
 					"response": []
 				}
 			]
+		}
+	],
+	"variable": [
+		{
+			"key": "access_token",
+			"value": ""
+		},
+		{
+			"key": "token_type",
+			"value": ""
+		},
+		{
+			"key": "user_id",
+			"value": ""
+		},
+		{
+			"key": "user_name",
+			"value": ""
+		},
+		{
+			"key": "company_id",
+			"value": ""
+		},
+		{
+			"key": "company_ruc",
+			"value": ""
+		},
+		{
+			"key": "company_name",
+			"value": ""
+		},
+		{
+			"key": "branch_id",
+			"value": ""
+		},
+		{
+			"key": "branch_code",
+			"value": ""
+		},
+		{
+			"key": "client_dni_id",
+			"value": ""
+		},
+		{
+			"key": "client_ruc_id",
+			"value": ""
 		}
 	]
 }
